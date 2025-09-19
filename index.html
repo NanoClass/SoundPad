@@ -1268,75 +1268,104 @@
 
                     grid.innerHTML = ''; // Clear existing sounds
                     
-                    config.sounds.forEach(soundConfig => {
+                    // Create audio elements first
+                    const audioPromises = config.sounds.map(soundConfig => {
                         if (!soundConfig.name || !soundConfig.url) {
                             console.warn('Skipping invalid sound configuration:', soundConfig);
-                            return;
+                            return Promise.resolve(null);
                         }
 
                         const soundName = soundConfig.name;
                         if (audioElements[soundName]) {
                             console.warn('Sound already exists:', soundName);
-                            return;
+                            return Promise.resolve(null);
                         }
                         
-                        const audio = new Audio(soundConfig.url);
-                        audio.id = soundName.replace(/\s+/g, '_').toLowerCase();
-                        audioElements[soundName] = audio;
-                        loopStates[soundName] = soundConfig.loop || false;
+                        return new Promise((resolve) => {
+                            const audio = new Audio();
+                            audio.id = soundName.replace(/\s+/g, '_').toLowerCase();
+                            audio.src = soundConfig.url;
+                            audioElements[soundName] = audio;
+                            loopStates[soundName] = soundConfig.loop || false;
+                            
+                            // Preload the audio
+                            audio.load();
+                            
+                            // Set up events after metadata is loaded
+                            audio.addEventListener('loadedmetadata', () => {
+                                setupAudioEvents(audio, soundName);
+                                setIndividualVolume(soundName, '1');
+                                sounds.push(soundName);
+                                resolve(soundName);
+                            });
+                            
+                            // Handle loading errors
+                            audio.addEventListener('error', () => {
+                                console.error(`Failed to load audio: ${soundName} from ${soundConfig.url}`);
+                                resolve(null);
+                            });
+                        });
+                    });
 
-                        const soundDiv = document.createElement('div');
-                        soundDiv.className = 'sound-item';
-                        soundDiv.setAttribute('data-sound', soundName);
-                        soundDiv.innerHTML = `
-                            <div class="sound-name">${soundName}</div>
-                            <div class="controls">
-                                <div class="control-row">
-                                    <button onclick="playSound('${soundName}'); event.stopPropagation()">▶️ Play</button>
-                                    <button class="stop" onclick="stopSound('${soundName}'); event.stopPropagation()">⏹️ Stop</button>
-                                </div>
-                                <div class="control-row">
-                                    <label class="loop-checkbox">
-                                        <input type="checkbox" id="loop_${soundName}" ${loopStates[soundName] ? 'checked' : ''} onchange="toggleLoop('${soundName}'); event.stopPropagation()">
-                                        <span class="checkbox-custom"></span>
-                                        <span class="checkbox-label">🔄 Loop</span>
-                                    </label>
-                                </div>
-                                <div class="seek-section">
-                                    <label class="seek-label">Progress:</label>
-                                    <div class="seek-container">
-                                        <div class="seek-control">
-                                            <div class="seek-bar-wrapper">
-                                                <input type="range" class="seek-slider" id="seek_${soundName}" min="0" max="100" value="0" step="1" oninput="seekSound('${soundName}', this.value)">
-                                                <span class="time-display" id="timeDisplay_${soundName}">0:00 / 0:00</span>
+                    // Wait for all sounds to be preloaded
+                    Promise.all(audioPromises).then(results => {
+                        const loadedSounds = results.filter(name => name !== null);
+                        console.log(`Successfully preloaded ${loadedSounds.length} sounds from sound-config.json`);
+                        
+                        // Create UI elements after all sounds are loaded
+                        config.sounds.forEach(soundConfig => {
+                            if (!soundConfig.name || !soundConfig.url) return;
+                            
+                            const soundName = soundConfig.name;
+                            if (!audioElements[soundName]) return;
+                            
+                            const soundDiv = document.createElement('div');
+                            soundDiv.className = 'sound-item';
+                            soundDiv.setAttribute('data-sound', soundName);
+                            soundDiv.innerHTML = `
+                                <div class="sound-name">${soundName}</div>
+                                <div class="controls">
+                                    <div class="control-row">
+                                        <button onclick="playSound('${soundName}'); event.stopPropagation()">▶️ Play</button>
+                                        <button class="stop" onclick="stopSound('${soundName}'); event.stopPropagation()">⏹️ Stop</button>
+                                    </div>
+                                    <div class="control-row">
+                                        <label class="loop-checkbox">
+                                            <input type="checkbox" id="loop_${soundName}" ${loopStates[soundName] ? 'checked' : ''} onchange="toggleLoop('${soundName}'); event.stopPropagation()">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-label">🔄 Loop</span>
+                                        </label>
+                                    </div>
+                                    <div class="seek-section">
+                                        <label class="seek-label">Progress:</label>
+                                        <div class="seek-container">
+                                            <div class="seek-control">
+                                                <div class="seek-bar-wrapper">
+                                                    <input type="range" class="seek-slider" id="seek_${soundName}" min="0" max="100" value="0" step="1" oninput="seekSound('${soundName}', this.value)">
+                                                    <span class="time-display" id="timeDisplay_${soundName}">0:00 / 0:00</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="volume-section">
-                                    <label class="volume-label">Individual Volume:</label>
-                                    <div class="volume-control">
-                                        <span id="volumeDisplay_${soundName}" class="volume-display">100%</span>
-                                        <input type="range" id="volume_${soundName}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${soundName}', this.value); event.stopPropagation()">
+                                    <div class="volume-section">
+                                        <label class="volume-label">Individual Volume:</label>
+                                        <div class="volume-control">
+                                            <span id="volumeDisplay_${soundName}" class="volume-display">100%</span>
+                                            <input type="range" id="volume_${soundName}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${soundName}', this.value); event.stopPropagation()">
+                                        </div>
                                     </div>
+                                    <button class="fade-button" onclick="fadeOut('${soundName}'); event.stopPropagation()">🎭 Fade Out</button>
                                 </div>
-                                <button class="fade-button" onclick="fadeOut('${soundName}'); event.stopPropagation()">🎭 Fade Out</button>
-                            </div>
-                        `;
-                        grid.appendChild(soundDiv);
-
-                        setupAudioEvents(audio, soundName);
-                        setIndividualVolume(soundName, '1');
-                        sounds.push(soundName);
+                            `;
+                            grid.appendChild(soundDiv);
+                        });
                     });
-
-                    console.log(`Successfully loaded ${config.sounds.length} sounds from sound-config.json`);
                 })
                 .catch(error => {
                     console.error('Error loading sound-config.json:', error);
                     console.log('Falling back to default sounds...');
                     
-                    // Fallback to default hardcoded sounds
+                    // Fallback to default hardcoded sounds with preloading
                     loadDefaultSounds();
                 });
         }
