@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundPad</title>
+    <!-- ShadCDN CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shadcn/ui@latest/dist/styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #2a2a2a, #1f1f1f);
+            padding: 20px;
+            border-right: 1px solid #444;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            font-size: 28px;
+        }
+        
+        .master-volume-section {
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 1px solid #555;
+        }
+        
+        .master-volume-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+        
+        .master-volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        #masterVolumeSlider {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #555;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        #masterVolumeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+        }
+        
+        #masterVolumeSlider::-webkit-slider-thumb:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        
+        #masterVolumeDisplay {
+            min-width: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+        
+        .currently-playing-section {
+            background: linear-gradient(145deg, #333, #2a2a2a);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid #555;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .currently-playing-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .currently-playing-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .currently-playing-controls button {
+            padding: 8px 12px;
+            font-size: 12px;
+            min-width: 80px;
+        }
+        
+        .playing-item {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .playing-item:hover {
+            background: rgba(76, 175, 80, 0.2);
+            transform: translateX(2px);
+        }
+        
+        .playing-item.looping {
+            border-color: #2196F3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        .playing-item.looping:hover {
+            background: rgba(33, 150, 243, 0.2);
+        }
+        
+        .playing-name {
+            flex: 1;
+            font-weight: 500;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .playing-status {
+            font-size: 12px;
+            color: #ccc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.3);
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .playing-status.looping {
+            color: #2196F3;
+            background: rgba(33, 150, 243, 0.2);
+        }
+        
+        .playing-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .mini-stop-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .mini-stop-btn:hover {
+            background: #da190b;
+            transform: scale(1.1);
+        }
+        
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+        
+        #fileInput {
+            margin-right: 10px;
+            padding: 5px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+        }
+        
+        .sound-item {
+            background: linear-gradient(145deg, #333, #2a2a2a);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #555;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .sound-item:hover {
+            /* No hover effects */
+        }
+        
+        .sound-item.selected {
+            border-color: #2196F3;
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+            background: linear-gradient(145deg, #3a3a3a, #313131);
+        }
+        
+        .sound-item.playing {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .sound-item.looping {
+            border-color: #2196F3;
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .sound-item.fading {
+            border-color: #f44336;
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+        }
+        
+        .sound-name {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .control-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 70px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.stop {
+            background: linear-gradient(145deg, #f44336, #da190b);
+        }
+        
+        button.stop:hover {
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.4);
+        }
+        
+        button.loop {
+            background: linear-gradient(145deg, #666, #555);
+            color: #ccc;
+            border: 2px solid #444;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button.loop::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        button.loop:hover::before {
+            left: 100%;
+        }
+        
+        button.loop.active {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white;
+            border-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+            transform: scale(1.02);
+        }
+        
+        button.loop.active:hover {
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        }
+        
+        .seek-section {
+            background: #2d2d2d;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .seek-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #bbb;
+            text-align: center;
+        }
+        
+        .seek-container {
+            position: relative;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .seek-control {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .seek-bar-wrapper {
+            flex: 1;
+            position: relative;
+            height: 8px;
+            background: #444;
+            border-radius: 4px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        
+        .seek-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        
+        .seek-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2196F3;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            z-index: 3;
+        }
+        
+        .seek-slider::-webkit-slider-thumb:hover {
+            background: #0b7dda;
+            transform: scale(1.1);
+        }
+        
+        .seek-slider::-webkit-slider-track {
+            background: #444;
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .seek-slider::-moz-range-track {
+            background: #444;
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        .seek-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2196F3;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+        
+        .seek-slider::-moz-range-thumb:hover {
+            background: #0b7dda;
+            transform: scale(1.1);
+        }
+        
+        .time-display {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #fff;
+            font-family: monospace;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 4;
+            pointer-events: none;
+        }
+        
+        .volume-section {
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .volume-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #bbb;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        input[type="range"]:not(.seek-slider) {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #555;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        input[type="range"]:not(.seek-slider)::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        input[type="range"]:not(.seek-slider)::-webkit-slider-thumb:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        
+        .volume-display {
+            min-width: 45px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .fade-button {
+            background: linear-gradient(145deg, #FF9800, #F57C00);
+            margin-top: 10px;
+        }
+        
+        .fade-button:hover {
+            box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4);
+        }
+        
+        /* ShadCN Checkbox Styles */
+        .loop-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .loop-checkbox:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .loop-checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .checkbox-custom {
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .loop-checkbox:hover .checkbox-custom {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .loop-checkbox input[type="checkbox"]:checked ~ .checkbox-custom {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+        
+        .loop-checkbox input[type="checkbox"]:checked ~ .checkbox-custom::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .checkbox-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .loop-checkbox:hover .checkbox-label {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .loop-checkbox input[type="checkbox"]:checked ~ .checkbox-label {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* ShadCN Focus Styles */
+        .loop-checkbox:focus-within {
+            outline: 2px solid #4CAF50;
+            outline-offset: 2px;
+        }
+        
+        .no-sounds {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+        
+        audio {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid #444;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sound-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .sound-item {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 60px;
+            }
+            
+            .master-volume-control, .volume-control {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+            
+            .seek-container {
+                height: 60px;
+            }
+            
+            .time-display {
+                top: -30px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 class="currently-playing-title">🎵 Currently Playing</h2>
+        <div id="currentlyPlayingContainer" class="currently-playing-section">
+            <div class="currently-playing-controls">
+                <button onclick="stopAllSounds()" class="stop">⏹️ STOP ALL</button>
+                <button onclick="fadeOutAllSounds()" class="fade-button">🎭 FADE OUT ALL</button>
+            </div>
+            <div class="no-sounds">No sounds playing</div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1>SoundPad</h1>
+        
+        <div class="master-volume-section">
+            <label class="master-volume-label">🎚️ Master Volume</label>
+            <div class="master-volume-control">
+                <input type="range" id="masterVolumeSlider" min="0" max="1" step="0.01" value="1" oninput="setMasterVolume(this.value)">
+                <span id="masterVolumeDisplay" class="volume-display">100%</span>
+            </div>
+        </div>
+        
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept="audio/*" multiple>
+            <button onclick="loadSounds()">📁 Load Sounds</button>
+            <input type="file" id="jsonInput" accept=".json" style="margin-left: 10px;">
+            <button onclick="loadSoundsFromJSON()" style="margin-left: 10px;">📄 Load Config</button>
+        </div>
+        
+        <div id="soundGrid" class="sound-grid">
+            <!-- Sample sounds will be added here -->
+        </div>
+    </div>
+
+    <script>
+        let sounds = [];
+        let audioElements = {};
+        let masterVolume = 1.0;
+        let playingSounds = new Set();
+        let loopStates = {};
+
+        function updateVolumeDisplay(name, value) {
+            const display = document.getElementById(`volumeDisplay_${name}`);
+            if (display) {
+                const percentage = Math.round(parseFloat(value) * 100);
+                display.textContent = percentage + '%';
+                display.style.color = percentage > 50 ? '#4CAF50' : percentage > 25 ? '#FF9800' : '#f44336';
+            }
+        }
+
+        function updateMasterVolumeDisplay(value) {
+            const display = document.getElementById('masterVolumeDisplay');
+            if (display) {
+                const percentage = Math.round(parseFloat(value) * 100);
+                display.textContent = percentage + '%';
+                display.style.color = percentage > 50 ? '#4CAF50' : percentage > 25 ? '#FF9800' : '#f44336';
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateSeekDisplay(name, progress) {
+            const slider = document.getElementById(`seek_${name}`);
+            const timeDisplay = document.getElementById(`timeDisplay_${name}`);
+            const audio = audioElements[name];
+            
+            if (slider && timeDisplay && audio && audio.duration) {
+                const seekTime = (parseFloat(progress) / 100) * audio.duration;
+                slider.value = progress;
+                timeDisplay.textContent = `${formatTime(seekTime)} / ${formatTime(audio.duration)}`;
+            }
+        }
+
+        function updatePlayingContainer() {
+            const container = document.getElementById('currentlyPlayingContainer');
+            
+            // Always preserve the control buttons
+            let html = '<div class="currently-playing-controls">';
+            html += '<button onclick="stopAllSounds()" class="stop">⏹️ STOP ALL</button>';
+            html += '<button onclick="fadeOutAllSounds()" class="fade-button">🎭 FADE OUT ALL</button>';
+            html += '</div>';
+            
+            if (playingSounds.size === 0) {
+                html += '<div class="no-sounds">No sounds playing</div>';
+            } else {
+                playingSounds.forEach(name => {
+                    const audio = audioElements[name];
+                    if (audio) {
+                        const isLooping = loopStates[name] || false;
+                        const statusClass = isLooping ? 'looping' : '';
+                        const statusText = isLooping ? 'LOOP' : 'PLAY';
+                        const timeText = audio.duration ? `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}` : '0:00 / 0:00';
+                        html += `
+                            <div class="playing-item ${statusClass}" data-sound="${name}">
+                                <span class="playing-name">${name}</span>
+                                <span class="playing-status ${statusClass}">${statusText}</span>
+                                <div class="playing-controls">
+                                    <button class="mini-stop-btn" onclick="stopSoundFromSidebar('${name}')" title="Stop">⏹</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function setMasterVolume(value) {
+            masterVolume = parseFloat(value);
+            updateMasterVolumeDisplay(value);
+            
+            Object.keys(audioElements).forEach(name => {
+                const audio = audioElements[name];
+                if (audio) {
+                    const individualSlider = document.getElementById(`volume_${name}`);
+                    if (individualSlider) {
+                        const individualVolume = parseFloat(individualSlider.value);
+                        audio.volume = individualVolume * masterVolume;
+                    }
+                }
+            });
+        }
+
+        function loadSounds() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            const grid = document.getElementById('soundGrid');
+
+            for (let file of files) {
+                if (file.type.startsWith('audio/')) {
+                    const soundName = file.name.replace(/\.[^/.]+$/, '');
+                    if (audioElements[soundName]) continue;
+                    
+                    const audio = new Audio(URL.createObjectURL(file));
+                    audio.id = soundName.replace(/\s+/g, '_').toLowerCase();
+                    audioElements[soundName] = audio;
+                    loopStates[soundName] = false;
+
+                    const soundDiv = document.createElement('div');
+                    soundDiv.className = 'sound-item';
+                    soundDiv.setAttribute('data-sound', soundName);
+                    soundDiv.innerHTML = `
+                        <div class="sound-name">${soundName}</div>
+                        <div class="controls">
+                            <div class="control-row">
+                                <button onclick="playSound('${soundName}'); event.stopPropagation()">▶️ Play</button>
+                                <button class="stop" onclick="stopSound('${soundName}'); event.stopPropagation()">⏹️ Stop</button>
+                            </div>
+                            <div class="control-row">
+                                <label class="loop-checkbox">
+                                    <input type="checkbox" id="loop_${soundName}" ${loopStates[soundName] ? 'checked' : ''} onchange="toggleLoop('${soundName}'); event.stopPropagation()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">🔄 Loop</span>
+                                </label>
+                            </div>
+                            <div class="seek-section">
+                                <label class="seek-label">Progress:</label>
+                                <div class="seek-container">
+                                    <div class="seek-control">
+                    <div class="seek-bar-wrapper">
+                        <input type="range" class="seek-slider" id="seek_${soundName}" min="0" max="100" value="0" step="1" oninput="seekSound('${soundName}', this.value)">
+                        <span class="time-display" id="timeDisplay_${soundName}">0:00 / 0:00</span>
+                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="volume-section">
+                                <label class="volume-label">Individual Volume:</label>
+                                <div class="volume-control">
+                                    <span id="volumeDisplay_${soundName}" class="volume-display">100%</span>
+                                    <input type="range" id="volume_${soundName}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${soundName}', this.value); event.stopPropagation()">
+                                </div>
+                            </div>
+                            <button class="fade-button" onclick="fadeOut('${soundName}'); event.stopPropagation()">🎭 Fade Out</button>
+                        </div>
+                    `;
+                    grid.appendChild(soundDiv);
+
+                    setupAudioEvents(audio, soundName);
+                    setIndividualVolume(soundName, '1');
+                    sounds.push(soundName);
+                }
+            }
+        }
+
+        function loadSoundsFromJSON() {
+            const jsonInput = document.getElementById('jsonInput');
+            const file = jsonInput.files[0];
+            
+            if (!file) {
+                alert('Please select a JSON file');
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.json')) {
+                alert('Please select a valid JSON file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    if (!config.sounds || !Array.isArray(config.sounds)) {
+                        throw new Error('Invalid JSON format: missing or invalid sounds array');
+                    }
+
+                    const grid = document.getElementById('soundGrid');
+                    
+                    config.sounds.forEach(soundConfig => {
+                        if (!soundConfig.name || !soundConfig.url) {
+                            console.warn('Skipping invalid sound configuration:', soundConfig);
+                            return;
+                        }
+
+                        const soundName = soundConfig.name;
+                        if (audioElements[soundName]) {
+                            console.warn('Sound already exists:', soundName);
+                            return;
+                        }
+                        
+                        const audio = new Audio(soundConfig.url);
+                        audio.id = soundName.replace(/\s+/g, '_').toLowerCase();
+                        audioElements[soundName] = audio;
+                        loopStates[soundName] = soundConfig.loop || false;
+
+                        const soundDiv = document.createElement('div');
+                        soundDiv.className = 'sound-item';
+                        soundDiv.setAttribute('data-sound', soundName);
+                        soundDiv.innerHTML = `
+                            <div class="sound-name">${soundName}</div>
+                            <div class="controls">
+                                <div class="control-row">
+                                    <button onclick="playSound('${soundName}'); event.stopPropagation()">▶️ Play</button>
+                                    <button class="stop" onclick="stopSound('${soundName}'); event.stopPropagation()">⏹️ Stop</button>
+                                </div>
+                            <div class="control-row">
+                                <label class="loop-checkbox">
+                                    <input type="checkbox" id="loop_${soundName}" ${loopStates[soundName] ? 'checked' : ''} onchange="toggleLoop('${soundName}'); event.stopPropagation()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">🔄 Loop</span>
+                                </label>
+                            </div>
+                                <div class="seek-section">
+                                    <label class="seek-label">Progress:</label>
+                                    <div class="seek-container">
+                                        <div class="seek-control">
+                                            <div class="seek-bar-wrapper">
+                                                <input type="range" class="seek-slider" id="seek_${soundName}" min="0" max="100" value="0" step="1" oninput="seekSound('${soundName}', this.value)">
+                                                <span class="time-display" id="timeDisplay_${soundName}">0:00 / 0:00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="volume-section">
+                                    <label class="volume-label">Individual Volume:</label>
+                                    <div class="volume-control">
+                                        <span id="volumeDisplay_${soundName}" class="volume-display">100%</span>
+                                        <input type="range" id="volume_${soundName}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${soundName}', this.value); event.stopPropagation()">
+                                    </div>
+                                </div>
+                                <button class="fade-button" onclick="fadeOut('${soundName}'); event.stopPropagation()">🎭 Fade Out</button>
+                            </div>
+                        `;
+                        grid.appendChild(soundDiv);
+
+                        setupAudioEvents(audio, soundName);
+                        setIndividualVolume(soundName, '1');
+                        sounds.push(soundName);
+                    });
+
+                    alert(`Successfully loaded ${config.sounds.length} sounds from JSON configuration`);
+                    
+                } catch (error) {
+                    console.error('Error loading JSON configuration:', error);
+                    alert('Error loading JSON configuration: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Error reading JSON file');
+                alert('Error reading JSON file');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function setIndividualVolume(name, value) {
+            const audio = audioElements[name];
+            if (audio) {
+                const individualVolume = parseFloat(value);
+                audio.volume = individualVolume * masterVolume;
+            }
+            updateVolumeDisplay(name, value);
+        }
+
+        function setupAudioEvents(audio, name) {
+            let updateInterval;
+            
+            audio.addEventListener('ended', function() {
+                const isLooping = loopStates[name];
+                if (isLooping) {
+                    this.currentTime = 0;
+                    this.play().catch(e => console.error('Loop restart error:', e));
+                    return;
+                }
+                
+                playingSounds.delete(name);
+                updatePlayingContainer();
+                
+                const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                if (soundDiv) {
+                    soundDiv.classList.remove('playing', 'fading', 'looping');
+                }
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                    updateInterval = null;
+                }
+                updateSeekDisplay(name, 100);
+            });
+
+            audio.addEventListener('play', function() {
+                playingSounds.add(name);
+                updatePlayingContainer();
+                
+                const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                if (soundDiv) {
+                    soundDiv.classList.add('playing');
+                    if (loopStates[name]) {
+                        soundDiv.classList.add('looping');
+                    }
+                    soundDiv.classList.remove('fading');
+                }
+                
+                updateInterval = setInterval(() => {
+                    if (audio && !audio.paused && !audio.ended) {
+                        const progress = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+                        updateSeekDisplay(name, progress);
+                    }
+                }, 100);
+            });
+
+            audio.addEventListener('pause', function() {
+                if (!this.ended && !loopStates[name]) {
+                    const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                    if (soundDiv) {
+                        soundDiv.classList.remove('playing');
+                    }
+                }
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                    updateInterval = null;
+                }
+            });
+
+            audio.addEventListener('loadedmetadata', function() {
+                updateSeekDisplay(name, 0);
+            });
+
+            audio.addEventListener('timeupdate', function() {
+                if (!this.paused && !this.ended) {
+                    const progress = this.duration ? (this.currentTime / this.duration) * 100 : 0;
+                    updateSeekDisplay(name, progress);
+                }
+            });
+        }
+
+        function seekSound(name, progress) {
+            const audio = audioElements[name];
+            if (audio && audio.duration) {
+                const seekTime = (parseFloat(progress) / 100) * audio.duration;
+                audio.currentTime = seekTime;
+                updateSeekDisplay(name, progress);
+            }
+        }
+
+        function playSound(name) {
+            const audio = audioElements[name];
+            if (audio) {
+                // Set loop based on current loop state
+                audio.loop = loopStates[name] || false;
+                const volumeSlider = document.getElementById(`volume_${name}`);
+                if (volumeSlider) {
+                    const individualVolume = parseFloat(volumeSlider.value);
+                    audio.volume = individualVolume * masterVolume;
+                    updateVolumeDisplay(name, volumeSlider.value);
+                }
+                audio.play().catch(e => console.error('Play error:', e));
+            }
+        }
+
+        function stopSound(name) {
+            const audio = audioElements[name];
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+                
+                playingSounds.delete(name);
+                updatePlayingContainer();
+                
+                const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                if (soundDiv) {
+                    soundDiv.classList.remove('playing', 'fading', 'looping');
+                }
+                
+                updateSeekDisplay(name, 0);
+            }
+        }
+
+        function stopSoundFromSidebar(name) {
+            stopSound(name);
+        }
+
+        function toggleLoop(name) {
+            const audio = audioElements[name];
+            const checkbox = document.getElementById(`loop_${name}`);
+            if (audio && checkbox) {
+                loopStates[name] = checkbox.checked;
+                audio.loop = checkbox.checked;
+                
+                const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                if (soundDiv) {
+                    soundDiv.classList.toggle('looping', checkbox.checked);
+                }
+            }
+            updatePlayingContainer();
+        }
+
+        function fadeOut(name) {
+            const audio = audioElements[name];
+            if (audio && !audio.paused) {
+                const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                if (soundDiv) {
+                    soundDiv.classList.add('fading');
+                    soundDiv.classList.remove('playing');
+                }
+                
+                const fadeDuration = 1000;
+                const startVolume = audio.volume / masterVolume;
+                const startTime = Date.now();
+
+                function fade() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / fadeDuration, 1);
+                    const currentIndividualVolume = startVolume * (1 - progress);
+                    audio.volume = currentIndividualVolume * masterVolume;
+                    
+                    updateVolumeDisplay(name, currentIndividualVolume.toString());
+
+                    if (progress < 1) {
+                        requestAnimationFrame(fade);
+                    } else {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        
+                        playingSounds.delete(name);
+                        updatePlayingContainer();
+                        
+                        const volumeSlider = document.getElementById(`volume_${name}`);
+                        if (volumeSlider) {
+                            audio.volume = parseFloat(volumeSlider.value) * masterVolume;
+                            updateVolumeDisplay(name, volumeSlider.value);
+                        }
+                        
+                        updateSeekDisplay(name, 0);
+                        
+                        if (soundDiv) {
+                            soundDiv.classList.remove('fading');
+                        }
+                    }
+                }
+                fade();
+            }
+        }
+
+        function stopAllSounds() {
+            playingSounds.forEach(name => {
+                stopSound(name);
+            });
+        }
+
+        function fadeOutAllSounds() {
+            if (playingSounds.size === 0) return;
+            
+            const fadeDuration = 2000;
+            const startTime = Date.now();
+            const fadeStates = new Map();
+
+            playingSounds.forEach(name => {
+                const audio = audioElements[name];
+                if (audio && !audio.paused) {
+                    const soundDiv = document.querySelector(`[data-sound="${name}"]`);
+                    if (soundDiv) {
+                        soundDiv.classList.add('fading');
+                        soundDiv.classList.remove('playing');
+                    }
+                    
+                    const startVolume = audio.volume / masterVolume;
+                    fadeStates.set(name, { audio, startVolume, startTime, soundDiv });
+                }
+            });
+
+            function fadeAll() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / fadeDuration, 1);
+                
+                fadeStates.forEach((state, name) => {
+                    const { audio, startVolume } = state;
+                    const currentIndividualVolume = startVolume * (1 - progress);
+                    audio.volume = currentIndividualVolume * masterVolume;
+                    
+                    updateVolumeDisplay(name, currentIndividualVolume.toString());
+                });
+
+                if (progress < 1) {
+                    requestAnimationFrame(fadeAll);
+                } else {
+                    fadeStates.forEach((state, name) => {
+                        const { audio, soundDiv } = state;
+                        audio.pause();
+                        audio.currentTime = 0;
+                        
+                        playingSounds.delete(name);
+                        
+                        const volumeSlider = document.getElementById(`volume_${name}`);
+                        if (volumeSlider) {
+                            audio.volume = parseFloat(volumeSlider.value) * masterVolume;
+                            updateVolumeDisplay(name, volumeSlider.value);
+                        }
+                        
+                        updateSeekDisplay(name, 0);
+                        
+                        if (soundDiv) {
+                            soundDiv.classList.remove('fading');
+                        }
+                    });
+                    
+                    updatePlayingContainer();
+                }
+            }
+            
+            fadeAll();
+        }
+
+        // Initialize
+        window.onload = function() {
+            updateMasterVolumeDisplay('1');
+            
+            const grid = document.getElementById('soundGrid');
+            
+            const samples = [
+                { name: 'Beep', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+Dyvmwh' },
+                { name: 'Drum Hit', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+                { name: 'Clap', url: 'https://www.soundjay.com/human/sounds/clapping-1.wav' }
+            ];
+            
+            samples.forEach(sample => {
+                loopStates[sample.name] = false;
+                const soundDiv = document.createElement('div');
+                soundDiv.className = 'sound-item';
+                soundDiv.setAttribute('data-sound', sample.name);
+                soundDiv.innerHTML = `
+                    <div class="sound-name">${sample.name}</div>
+                    <div class="controls">
+                        <div class="control-row">
+                            <button onclick="playSound('${sample.name}'); event.stopPropagation()">▶️ Play</button>
+                            <button class="stop" onclick="stopSound('${sample.name}'); event.stopPropagation()">⏹️ Stop</button>
+                        </div>
+                            <div class="control-row">
+                                <label class="loop-checkbox">
+                                    <input type="checkbox" id="loop_${sample.name}" ${loopStates[sample.name] ? 'checked' : ''} onchange="toggleLoop('${sample.name}'); event.stopPropagation()">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">🔄 Loop</span>
+                                </label>
+                            </div>
+                        <div class="seek-section">
+                            <label class="seek-label">Progress:</label>
+                            <div class="seek-container">
+                                <div class="seek-control">
+                                    <div class="seek-bar-wrapper">
+                                        <input type="range" class="seek-slider" id="seek_${sample.name}" min="0" max="100" value="0" step="1" oninput="seekSound('${sample.name}', this.value)">
+                                        <span class="time-display" id="timeDisplay_${sample.name}">0:00 / 0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="volume-section">
+                            <label class="volume-label">Individual Volume:</label>
+                            <div class="volume-control">
+                                <span id="volumeDisplay_${sample.name}" class="volume-display">100%</span>
+                                <input type="range" id="volume_${sample.name}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${sample.name}', this.value); event.stopPropagation()">
+                            </div>
+                        </div>
+                        <button class="fade-button" onclick="fadeOut('${sample.name}'); event.stopPropagation()">🎭 Fade Out</button>
+                    </div>
+                `;
+                grid.appendChild(soundDiv);
+
+                const audio = new Audio(sample.url);
+                audioElements[sample.name] = audio;
+                
+                setupAudioEvents(audio, sample.name);
+                setIndividualVolume(sample.name, '1');
+            });
+        };
+    </script>
+</body>
+</html>
