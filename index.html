@@ -1246,6 +1246,102 @@
         window.onload = function() {
             updateMasterVolumeDisplay('1');
             
+            // Load sounds from sound-config.json by default
+            loadSoundsFromConfig();
+        };
+
+        function loadSoundsFromConfig() {
+            const grid = document.getElementById('soundGrid');
+            
+            // Try to load from sound-config.json
+            fetch('sound-config.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    if (!config.sounds || !Array.isArray(config.sounds)) {
+                        throw new Error('Invalid JSON format: missing or invalid sounds array');
+                    }
+
+                    grid.innerHTML = ''; // Clear existing sounds
+                    
+                    config.sounds.forEach(soundConfig => {
+                        if (!soundConfig.name || !soundConfig.url) {
+                            console.warn('Skipping invalid sound configuration:', soundConfig);
+                            return;
+                        }
+
+                        const soundName = soundConfig.name;
+                        if (audioElements[soundName]) {
+                            console.warn('Sound already exists:', soundName);
+                            return;
+                        }
+                        
+                        const audio = new Audio(soundConfig.url);
+                        audio.id = soundName.replace(/\s+/g, '_').toLowerCase();
+                        audioElements[soundName] = audio;
+                        loopStates[soundName] = soundConfig.loop || false;
+
+                        const soundDiv = document.createElement('div');
+                        soundDiv.className = 'sound-item';
+                        soundDiv.setAttribute('data-sound', soundName);
+                        soundDiv.innerHTML = `
+                            <div class="sound-name">${soundName}</div>
+                            <div class="controls">
+                                <div class="control-row">
+                                    <button onclick="playSound('${soundName}'); event.stopPropagation()">▶️ Play</button>
+                                    <button class="stop" onclick="stopSound('${soundName}'); event.stopPropagation()">⏹️ Stop</button>
+                                </div>
+                                <div class="control-row">
+                                    <label class="loop-checkbox">
+                                        <input type="checkbox" id="loop_${soundName}" ${loopStates[soundName] ? 'checked' : ''} onchange="toggleLoop('${soundName}'); event.stopPropagation()">
+                                        <span class="checkbox-custom"></span>
+                                        <span class="checkbox-label">🔄 Loop</span>
+                                    </label>
+                                </div>
+                                <div class="seek-section">
+                                    <label class="seek-label">Progress:</label>
+                                    <div class="seek-container">
+                                        <div class="seek-control">
+                                            <div class="seek-bar-wrapper">
+                                                <input type="range" class="seek-slider" id="seek_${soundName}" min="0" max="100" value="0" step="1" oninput="seekSound('${soundName}', this.value)">
+                                                <span class="time-display" id="timeDisplay_${soundName}">0:00 / 0:00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="volume-section">
+                                    <label class="volume-label">Individual Volume:</label>
+                                    <div class="volume-control">
+                                        <span id="volumeDisplay_${soundName}" class="volume-display">100%</span>
+                                        <input type="range" id="volume_${soundName}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${soundName}', this.value); event.stopPropagation()">
+                                    </div>
+                                </div>
+                                <button class="fade-button" onclick="fadeOut('${soundName}'); event.stopPropagation()">🎭 Fade Out</button>
+                            </div>
+                        `;
+                        grid.appendChild(soundDiv);
+
+                        setupAudioEvents(audio, soundName);
+                        setIndividualVolume(soundName, '1');
+                        sounds.push(soundName);
+                    });
+
+                    console.log(`Successfully loaded ${config.sounds.length} sounds from sound-config.json`);
+                })
+                .catch(error => {
+                    console.error('Error loading sound-config.json:', error);
+                    console.log('Falling back to default sounds...');
+                    
+                    // Fallback to default hardcoded sounds
+                    loadDefaultSounds();
+                });
+        }
+
+        function loadDefaultSounds() {
             const grid = document.getElementById('soundGrid');
             
             const samples = [
@@ -1253,6 +1349,8 @@
                 { name: 'Drum Hit', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
                 { name: 'Clap', url: 'https://www.soundjay.com/human/sounds/clapping-1.wav' }
             ];
+            
+            grid.innerHTML = ''; // Clear existing sounds
             
             samples.forEach(sample => {
                 loopStates[sample.name] = false;
@@ -1266,13 +1364,13 @@
                             <button onclick="playSound('${sample.name}'); event.stopPropagation()">▶️ Play</button>
                             <button class="stop" onclick="stopSound('${sample.name}'); event.stopPropagation()">⏹️ Stop</button>
                         </div>
-                            <div class="control-row">
-                                <label class="loop-checkbox">
-                                    <input type="checkbox" id="loop_${sample.name}" ${loopStates[sample.name] ? 'checked' : ''} onchange="toggleLoop('${sample.name}'); event.stopPropagation()">
-                                    <span class="checkbox-custom"></span>
-                                    <span class="checkbox-label">🔄 Loop</span>
-                                </label>
-                            </div>
+                        <div class="control-row">
+                            <label class="loop-checkbox">
+                                <input type="checkbox" id="loop_${sample.name}" ${loopStates[sample.name] ? 'checked' : ''} onchange="toggleLoop('${sample.name}'); event.stopPropagation()">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">🔄 Loop</span>
+                            </label>
+                        </div>
                         <div class="seek-section">
                             <label class="seek-label">Progress:</label>
                             <div class="seek-container">
@@ -1301,8 +1399,9 @@
                 
                 setupAudioEvents(audio, sample.name);
                 setIndividualVolume(sample.name, '1');
+                sounds.push(sample.name);
             });
-        };
+        }
     </script>
 </body>
 </html>
