@@ -1,20 +1,24 @@
 {
   "sounds": [
     {
-      "name": "Email Notification",
-      "url": "sound/01. EMAIL NOTIFICATION.mp3"
+      "name": "Canteen BGM",
+      "url": "sound/Canteen BGM.mp3"
     },
     {
-      "name": "Sound Filler",
-      "url": "sound/04. SCENE 2_PAPA+MAMA .mp3"
-    },
-    {
-      "name": "Ringtones",
+      "name": "Phone Ringtone",
       "url": "sound/06. RINGTONES.mp3"
     },
     {
-      "name": "Hangup",
-      "url": "sound/05. PHONE HANGUP.mp3"
+      "name": "Mama Andy 1",
+      "url": "sound/MAMA_Andy_1.mp3"
+    },
+    {
+      "name": "Mama Andy 2",
+      "url": "sound/MAMA_Andy_2.mp3"
+    },
+    {
+      "name": "Mama Andy 3",
+      "url": "sound/MAMA_Andy_3.mp3"
     }
   ]
 }
