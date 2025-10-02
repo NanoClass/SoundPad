@@ -2,27 +2,31 @@
   "sounds": [
     {
       "name": "Canteen BGM",
-      "url": "sound/Canteen BGM.mp3"
+      "url": "sound/Canteen BGM.mp3",
+      "volume": 80,
+      "pan": 0,
+      "loop": true
     },
     {
-      "name": "Phone Ringtone",
-      "url": "sound/06. RINGTONES.mp3"
+      "name": "ORANG TUA 1",
+      "url": "sound/ORANG_TUA_1.mp3",
+      "volume": 90,
+      "pan": -6,
+      "loop": false
     },
     {
-      "name": "Mama Andy 1",
-      "url": "sound/MAMA_Andy_1.mp3"
+      "name": "ORANG TUA 2",
+      "url": "sound/ORANG_TUA_2.mp3",
+      "volume": 90,
+      "pan": -6,
+      "loop": false
     },
     {
-      "name": "Mama Andy 2",
-      "url": "sound/MAMA_Andy_2.mp3"
-    },
-    {
-      "name": "Mama Andy 3",
-      "url": "sound/MAMA_Andy_3.mp3"
-    },
-    {
-      "name": "Mama Andy 4",
-      "url": "sound/MAMA_Andy_4.mp3"
+      "name": "MUSIC DJ",
+      "url": "sound/DJ.mp3",
+      "volume": 50,
+      "pan": 0,
+      "loop": true
     }
   ]
 }
