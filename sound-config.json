@@ -42,7 +42,7 @@
       ],
       "on_stop": [
         { "action": "toggleEQ", "target": "MUSIC DJ" },
-        { "action": "setVolume", "target": "MUSIC DJ", "value": 15 },
+        { "action": "setVolume", "target": "MUSIC DJ", "value": 18 },
         { "action": "play", "target": "GINA 2" }
       ]
     },
