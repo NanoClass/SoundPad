@@ -22,11 +22,82 @@
       "loop": false
     },
     {
+      "name": "PHONE CALL",
+      "url": "sound/CALL.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false,
+      "on_stop": [
+        { "action": "play", "target": "GINA 1" }
+      ]
+    },
+    {
+      "name": "GINA 1",
+      "url": "sound/GINA 1.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false,
+      "on_play": [
+        { "action": "play", "target": "MUSIC DJ" }
+      ],
+      "on_stop": [
+        { "action": "toggleEQ", "target": "MUSIC DJ" },
+        { "action": "setVolume", "target": "MUSIC DJ", "value": 15 },
+        { "action": "play", "target": "GINA 2" }
+      ]
+    },
+    {
+      "name": "GINA 2",
+      "url": "sound/GINA 2.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "GINA 3",
+      "url": "sound/GINA 3.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "GINA 4",
+      "url": "sound/GINA 4.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "GINA 5",
+      "url": "sound/GINA 5.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "GINA 6",
+      "url": "sound/GINA 6.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "END CALL",
+      "url": "sound/END CALL.mp3",
+      "volume": 10,
+      "pan": 0,
+      "loop": false,
+      "on_play": [
+        { "action": "stop", "target": "MUSIC DJ" }
+      ]
+    },
+    {
       "name": "MUSIC DJ",
-      "url": "sound/DJ.mp3",
+      "url": "sound/MUSIC DJ.mp3",
       "volume": 50,
       "pan": 0,
       "loop": true
     }
   ]
 }
+ 

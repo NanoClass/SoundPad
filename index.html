@@ -674,7 +674,7 @@
                             <span class="checkbox-label">🔄 Loop</span>
                         </label>
                         <label class="custom-checkbox">
-                            <input type="checkbox" id="eq_${name}" onchange="toggleEQ('${name}'); event.stopPropagation()">
+                            <input type="checkbox" id="eq_${name}" onchange="handleEQCheckbox('${name}'); event.stopPropagation()">
                             <span class="checkbox-visual"></span>
                             <span class="checkbox-label">🎧 Apply EQ</span>
                         </label>
@@ -693,7 +693,7 @@
                     <div class="volume-section">
                         <label class="volume-label">Individual Volume:</label>
                         <div class="volume-control">
-                            <input type="range" id="volume_${name}" min="0" max="1" step="0.01" value="1" oninput="setIndividualVolume('${name}', this.value); event.stopPropagation()">
+                            <input type="range" id="volume_${name}" min="0" max="1" step="0.01" value="1" oninput="setSoundVolume('${name}', this.value); event.stopPropagation()">
                              <span id="volumeDisplay_${name}" class="volume-display">100%</span>
                         </div>
                     </div>
@@ -756,9 +756,7 @@
                     soundDiv.innerHTML = createSoundItemHTML(name);
                     grid.appendChild(soundDiv);
                     
-                    const volumeSlider = document.getElementById(`volume_${name}`);
-                    if (volumeSlider) volumeSlider.value = volume / 100;
-                    setIndividualVolume(name, volume / 100);
+                    setSoundVolume(name, volume / 100);
 
                     const panSlider = document.getElementById(`pan_${name}`);
                     if (panSlider) panSlider.value = pan;
@@ -840,7 +838,7 @@
 
             try {
                 macroList.forEach(macro => {
-                    const { action, target } = macro;
+                    const { action, target, value } = macro;
                     if (!action) return;
 
                     console.log(`Macro: Firing action '${action}' on target '${target || 'all'}'`);
@@ -860,6 +858,14 @@
                         case 'fadeoutall':
                             fadeOutAllSounds();
                             break;
+                        case 'toggleeq':
+                             if (target && audioElements[target]) toggleEQ(target);
+                            break;
+                        case 'setvolume':
+                             if (target && audioElements[target] && typeof value === 'number') {
+                                setSoundVolume(target, value / 100);
+                             }
+                             break;
                         default:
                             console.warn(`Unknown macro action: '${action}'`);
                     }
@@ -876,8 +882,9 @@
         function playSound(name) {
             const audio = audioElements[name];
             if (audio) {
-                if (!isExecutingMacro && macros[name] && macros[name].on_play) {
-                    executeMacros(macros[name].on_play);
+                if (macros[name] && macros[name].on_play) {
+                    // Defer the execution of the next macro to allow the current one to finish and release its lock.
+                    setTimeout(() => executeMacros(macros[name].on_play), 10);
                 }
                 if (audio.currentTime >= audio.duration - 0.1) {
                     audio.currentTime = 0;
@@ -892,15 +899,14 @@
                 const wasPlaying = !audio.paused;
                 audio.pause();
                 audio.currentTime = 0;
-                // Only fire stop macro if the sound was actually playing to avoid loops on manual stop clicks
-                if (wasPlaying && !isExecutingMacro && macros[name] && macros[name].on_stop) {
-                    executeMacros(macros[name].on_stop);
+                if (wasPlaying && macros[name] && macros[name].on_stop) {
+                    // Defer the execution of the next macro to allow the current one to finish and release its lock.
+                    setTimeout(() => executeMacros(macros[name].on_stop), 10);
                 }
             }
         }
         
         function stopAllSounds() {
-            // Create a copy of the set to iterate over, as stopSound modifies the original set
             [...playingSounds].forEach(name => stopSound(name));
         }
 
@@ -916,12 +922,18 @@
             });
         }
 
-        function setIndividualVolume(name, value) {
+        function setSoundVolume(name, volume) { // volume is 0-1
             const audio = audioElements[name];
+            const slider = document.getElementById(`volume_${name}`);
+            const cleanVolume = parseFloat(volume);
+
             if (audio) {
-                audio.volume = parseFloat(value) * masterVolume;
+                audio.volume = cleanVolume * masterVolume;
             }
-            updateVolumeDisplay(name, value);
+            if (slider) {
+                slider.value = cleanVolume;
+            }
+            updateVolumeDisplay(name, cleanVolume);
         }
         
         function setPan(name, value) {
@@ -962,7 +974,7 @@
                 const progress = (timestamp - start) / 1000; // 1 second fade
                 const newVolume = Math.max(0, startVolume * (1 - progress));
                 
-                setIndividualVolume(name, newVolume.toString());
+                setSoundVolume(name, newVolume);
                 
                 if (progress < 1) {
                     requestAnimationFrame(step);
@@ -997,12 +1009,12 @@
             const lowshelf = audioContext.createBiquadFilter();
             lowshelf.type = "lowshelf";
             lowshelf.frequency.value = 500;
-            lowshelf.gain.value = -15;
+            lowshelf.gain.value = -5;
 
             const highshelf = audioContext.createBiquadFilter();
             highshelf.type = "highshelf";
             highshelf.frequency.value = 1000;
-            highshelf.gain.value = -50;
+            highshelf.gain.value = -40;
             
             lowshelf.connect(highshelf);
 
@@ -1018,19 +1030,32 @@
 
             audioNodes[name].lastFilter.connect(audioContext.destination);
         }
+        
+        function handleEQCheckbox(name){
+            const checkbox = document.getElementById(`eq_${name}`);
+            if(!checkbox) return;
+            const newState = checkbox.checked;
+            applyEQState(name, newState);
+        }
 
         function toggleEQ(name) {
+            const newState = !eqStates[name];
+            applyEQState(name, newState);
+        }
+        
+        function applyEQState(name, newState){
             const nodes = audioNodes[name];
             const checkbox = document.getElementById(`eq_${name}`);
             if (!nodes || !checkbox) return;
+            
+            eqStates[name] = newState;
+            checkbox.checked = newState;
 
-            eqStates[name] = checkbox.checked;
-
-            if (checkbox.checked) {
-                nodes.panner.disconnect(audioContext.destination);
+            if (newState) {
+                nodes.panner.disconnect();
                 nodes.panner.connect(nodes.firstFilter);
             } else {
-                nodes.panner.disconnect(nodes.firstFilter);
+                nodes.panner.disconnect();
                 nodes.panner.connect(audioContext.destination);
             }
         }
@@ -1134,7 +1159,6 @@
             });
 
             audio.addEventListener('ended', () => {
-                // Fire on_stop macro when sound naturally ends
                 if (!isExecutingMacro && macros[name] && macros[name].on_stop) {
                     executeMacros(macros[name].on_stop);
                 }
