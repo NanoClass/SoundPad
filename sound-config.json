@@ -1,37 +1,6 @@
 {
   "sounds": [
     {
-      "name": "Canteen BGM",
-      "url": "sound/Canteen BGM.mp3",
-      "volume": 80,
-      "pan": 0,
-      "loop": true
-    },
-    {
-      "name": "ORANG TUA 1",
-      "url": "sound/ORANG_TUA_1.mp3",
-      "volume": 90,
-      "pan": -6,
-      "loop": false
-    },
-    {
-      "name": "ORANG TUA 2",
-      "url": "sound/ORANG_TUA_2.mp3",
-      "volume": 90,
-      "pan": -6,
-      "loop": false
-    },
-    {
-      "name": "PHONE CALL",
-      "url": "sound/CALL.mp3",
-      "volume": 90,
-      "pan": 0,
-      "loop": false,
-      "on_stop": [
-        { "action": "play", "target": "GINA 1" }
-      ]
-    },
-    {
       "name": "GINA 1",
       "url": "sound/GINA 1.mp3",
       "volume": 90,
@@ -47,56 +16,25 @@
       ]
     },
     {
-      "name": "GINA 2",
-      "url": "sound/GINA 2.mp3",
+      "name": "SFX_TINK",
+      "url": "sound/SFX_TINK.mp3",
       "volume": 90,
       "pan": 0,
       "loop": false
     },
     {
-      "name": "GINA 3",
-      "url": "sound/GINA 3.mp3",
+      "name": "SFX_MAGIC_WAND",
+      "url": "sound/SFX_MAGIC_WAND.mp3",
       "volume": 90,
       "pan": 0,
       "loop": false
     },
     {
-      "name": "GINA 4",
-      "url": "sound/GINA 4.mp3",
-      "volume": 90,
-      "pan": 0,
-      "loop": false
-    },
-    {
-      "name": "GINA 5",
-      "url": "sound/GINA 5.mp3",
-      "volume": 90,
-      "pan": 0,
-      "loop": false
-    },
-    {
-      "name": "GINA 6",
-      "url": "sound/GINA 6.mp3",
-      "volume": 90,
-      "pan": 0,
-      "loop": false
-    },
-    {
-      "name": "END CALL",
-      "url": "sound/END CALL.mp3",
-      "volume": 10,
-      "pan": 0,
-      "loop": false,
-      "on_play": [
-        { "action": "stop", "target": "MUSIC DJ" }
-      ]
-    },
-    {
-      "name": "MUSIC DJ",
-      "url": "sound/MUSIC DJ.mp3",
+      "name": "SFX_JANGKRIK",
+      "url": "sound/SFX_JANGKRIK.mp3",
       "volume": 50,
       "pan": 0,
-      "loop": true
+      "loop": false
     }
   ]
 }
