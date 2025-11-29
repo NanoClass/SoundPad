@@ -80,6 +80,13 @@
       "volume": 90,
       "pan": 0,
       "loop": false
+    },
+    {
+      "name": "BGM_AWARD_CLOSING",
+      "url": "sound/BGM_AWARD_CLOSING.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
     }
   ]
 }
