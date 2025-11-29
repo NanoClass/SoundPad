@@ -66,6 +66,20 @@
       "volume": 30,
       "pan": 0,
       "loop": false
+    },
+    {
+      "name": "PERF_DARREN",
+      "url": "sound/PERF_DARREN.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "PERF_ERIKA",
+      "url": "sound/PERF_ERIKA.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
     }
   ]
 }
