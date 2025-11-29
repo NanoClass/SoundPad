@@ -1,6 +1,20 @@
 {
   "sounds": [
     {
+      "name": "M_GEPPETO_BANGUN",
+      "url": "sound/M_GEPPETO_BANGUN.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "M_PINOKIO_KE_SEKOLAH",
+      "url": "sound/M_PINOKIO_KE_SEKOLAH.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
       "name": "GINA 1",
       "url": "sound/GINA 1.mp3",
       "volume": 90,
