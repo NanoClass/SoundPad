@@ -1,6 +1,16 @@
 {
   "sounds": [
     {
+      "name": "BGM_OPENING",
+      "url": "sound/BGM_OPENING.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false,
+      "on_stop": [
+        { "action": "play", "target": "SFX_JANGKRIK" }
+      ]
+    },
+    {
       "name": "M_GEPPETO_BANGUN",
       "url": "sound/M_GEPPETO_BANGUN.mp3",
       "volume": 90,
@@ -10,6 +20,13 @@
     {
       "name": "M_PINOKIO_KE_SEKOLAH",
       "url": "sound/M_PINOKIO_KE_SEKOLAH.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "BGM_AWARD_OPENING",
+      "url": "sound/BGM_AWARD_OPENING.mp3",
       "volume": 90,
       "pan": 0,
       "loop": false
@@ -46,7 +63,7 @@
     {
       "name": "SFX_JANGKRIK",
       "url": "sound/SFX_JANGKRIK.mp3",
-      "volume": 50,
+      "volume": 30,
       "pan": 0,
       "loop": false
     }
