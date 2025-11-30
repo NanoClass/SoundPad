@@ -68,6 +68,13 @@
       "loop": false
     },
     {
+      "name": "PERF_ONE_VIBE",
+      "url": "sound/PERF_ONE_VIBE.mp3",
+      "volume": 90,
+      "pan": 0,
+      "loop": false
+    },
+    {
       "name": "PERF_DARREN",
       "url": "sound/PERF_DARREN.mp3",
       "volume": 90,
