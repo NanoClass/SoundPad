@@ -660,6 +660,8 @@
          * @returns {string} - The HTML string for the sound item.
          */
         function createSoundItemHTML(name) {
+            const audio = audioElements[name];
+            const durationText = audio && isFinite(audio.duration) ? formatTime(audio.duration) : '0:00';
             return `
                 <div class="sound-name">${name}</div>
                 <div class="controls">
@@ -685,7 +687,7 @@
                             <div class="seek-control">
                                 <div class="seek-bar-wrapper">
                                     <input type="range" class="seek-slider" id="seek_${name}" min="0" max="100" value="0" step="1" oninput="seekSound('${name}', this.value)">
-                                    <span class="time-display" id="timeDisplay_${name}">0:00 / 0:00</span>
+                                    <span class="time-display" id="timeDisplay_${name}">0:00 / ${durationText}</span>
                                 </div>
                             </div>
                         </div>
@@ -1103,7 +1105,8 @@
             if (slider && timeDisplay && isFinite(audio.duration)) {
                 const progress = (audio.currentTime / audio.duration) * 100;
                 slider.value = progress;
-                timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+                const remainingTime = audio.duration - audio.currentTime;
+                timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)} (-${formatTime(remainingTime)})`;
             }
         }
 
