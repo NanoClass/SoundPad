@@ -55,7 +55,6 @@
             border-radius: 12px;
             margin-bottom: 25px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             border: 1px solid #555;
         }
         
@@ -95,13 +94,10 @@
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
         }
         
         #masterVolumeSlider::-webkit-slider-thumb:hover {
             background: #45a049;
-            transform: scale(1.1);
         }
         
         #masterVolumeDisplay {
@@ -120,7 +116,6 @@
             border-radius: 12px;
             padding: 15px;
             border: 2px solid #555;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             flex: 1;
             overflow-y: auto;
             display: flex;
@@ -160,12 +155,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.3s ease;
         }
         
         .playing-item:hover {
             background: rgba(76, 175, 80, 0.2);
-            transform: translateX(2px);
         }
         
         .playing-item.looping {
@@ -217,89 +210,70 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
         }
         
         .mini-stop-btn:hover {
             background: #da190b;
-            transform: scale(1.1);
         }
         
-        .upload-section {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #2a2a2a;
-            border-radius: 8px;
-        }
-        
-        #fileInput {
-            margin-right: 10px;
-            padding: 5px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 4px;
-        }
         
         .sound-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 100%;
         }
         
         .sound-item {
             background: linear-gradient(145deg, #333, #2a2a2a);
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid #555;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #555;
             cursor: pointer;
             position: relative;
+            text-align: left;
+        }
+        
+        .sound-item:hover {
+            background: linear-gradient(145deg, #3a3a3a, #313131);
         }
         
         .sound-item.selected {
             border-color: #2196F3;
-            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
-            background: linear-gradient(145deg, #3a3a3a, #313131);
         }
         
         .sound-item.playing {
             border-color: #4CAF50;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
         }
         
         .sound-item.looping {
             border-color: #2196F3;
-            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
         }
         
         .sound-item.fading {
             border-color: #f44336;
-            box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
         }
         
         .sound-name {
             font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 16px;
             color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            text-shadow: none;
         }
         
         .controls {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
             gap: 12px;
+            align-items: flex-start;
         }
         
         .control-row {
             display: flex;
             gap: 8px;
-            justify-content: center;
+            justify-content: flex-start;
             flex-wrap: wrap;
         }
         
@@ -307,23 +281,20 @@
             background: linear-gradient(145deg, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 10px 16px;
+            padding: 6px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 500;
-            transition: all 0.2s ease;
-            min-width: 70px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            min-width: 40px;
         }
         
         button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #45a049, #4CAF50);
         }
         
-        button:active {
-            transform: translateY(0);
+        button img {
+            filter: brightness(0) invert(1);
         }
         
         button.stop {
@@ -331,27 +302,46 @@
         }
         
         button.stop:hover {
-            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.4);
+            background: linear-gradient(145deg, #da190b, #f44336);
+        }
+        
+        .mini-stop-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mini-stop-btn:hover {
+            background: #da190b;
         }
         
         .seek-section {
             background: #2d2d2d;
-            padding: 16px;
+            padding: 10px;
             border-radius: 8px;
-            margin: 10px 0;
+            min-width: 280px;
+            flex: 1 1 auto;
         }
         
         .seek-label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 6px;
+            font-size: 11px;
             color: #bbb;
             text-align: center;
         }
         
         .seek-container {
             position: relative;
-            height: 50px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -360,7 +350,7 @@
         .seek-control {
             position: relative;
             width: 100%;
-            height: 40px;
+            height: 25px;
             display: flex;
             align-items: center;
         }
@@ -368,10 +358,10 @@
         .seek-bar-wrapper {
             flex: 1;
             position: relative;
-            height: 8px;
+            height: 6px;
             background: #444;
-            border-radius: 4px;
-            margin: 0 10px;
+            border-radius: 3px;
+            margin: 0 6px;
             cursor: pointer;
         }
         
@@ -392,60 +382,59 @@
         .seek-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #2196F3;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
             z-index: 3;
         }
         
         .seek-slider::-webkit-slider-thumb:hover {
             background: #0b7dda;
-            transform: scale(1.1);
         }
         
         .time-display {
             position: absolute;
-            top: -25px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 12px;
+            font-size: 10px;
             color: #fff;
             font-family: monospace;
             background: rgba(0,0,0,0.7);
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 2px 4px;
+            border-radius: 3px;
             white-space: nowrap;
-            z-index: 4;
             pointer-events: none;
         }
         
         .volume-section, .pan-section {
             background: #2d2d2d;
-            padding: 12px;
+            padding: 8px;
             border-radius: 8px;
-            margin-top: 10px;
+            margin-top: 6px;
+            min-width: 200px;
+            flex: 0 0 auto;
         }
 
         .volume-label, .pan-label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 4px;
+            font-size: 11px;
             color: #bbb;
         }
         
         .volume-control, .pan-control {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             width: 100%;
         }
         
         input[type="range"]:not(.seek-slider) {
             flex: 1;
-            height: 6px;
+            height: 5px;
             border-radius: 3px;
             background: #555;
             outline: none;
@@ -457,17 +446,15 @@
         input[type="range"]:not(.seek-slider)::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         input[type="range"]:not(.seek-slider)::-webkit-slider-thumb:hover {
             background: #45a049;
-            transform: scale(1.1);
         }
 
         .pan-control input[type="range"]::-webkit-slider-thumb {
@@ -478,13 +465,13 @@
         }
         
         .volume-display, .pan-display {
-            min-width: 45px;
-            font-size: 14px;
+            min-width: 35px;
+            font-size: 11px;
             font-weight: 500;
             color: #4CAF50;
             background: rgba(76, 175, 80, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 2px 4px;
+            border-radius: 3px;
             text-align: center;
             border: 1px solid rgba(76, 175, 80, 0.3);
         }
@@ -497,23 +484,25 @@
         
         .fade-button {
             background: linear-gradient(145deg, #FF9800, #F57C00);
-            margin-top: 10px;
+            margin-top: 6px;
+            padding: 4px 8px;
+            font-size: 16px;
+            min-width: 35px;
         }
         
         .fade-button:hover {
-            box-shadow: 0 4px 8px rgba(255, 152, 0, 0.4);
+            background: linear-gradient(145deg, #F57C00, #FF9800);
         }
         
         /* Custom Checkbox Styles */
         .custom-checkbox {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             cursor: pointer;
             user-select: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
+            padding: 3px 6px;
+            border-radius: 5px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -530,15 +519,14 @@
         }
         
         .checkbox-visual {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
+            border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
             position: relative;
         }
         
@@ -555,8 +543,8 @@
         .custom-checkbox input[type="checkbox"]:checked ~ .checkbox-visual::after {
             content: '';
             position: absolute;
-            width: 4px;
-            height: 8px;
+            width: 2px;
+            height: 5px;
             border: solid white;
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
@@ -564,9 +552,8 @@
         
         .checkbox-label {
             color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
-            transition: color 0.2s ease;
         }
         
         .custom-checkbox:hover .checkbox-label {
@@ -600,10 +587,6 @@
             .main-content {
                 margin-left: 0;
             }
-            
-            .sound-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -630,10 +613,6 @@
             </div>
         </div>
         
-        <div class="upload-section">
-            <input type="file" id="fileInput" accept="audio/*" multiple onchange="loadSoundsFromFiles(this.files)">
-            <input type="file" id="jsonInput" accept=".json" style="margin-left: 10px;" onchange="loadSoundsFromJSON(this.files[0])">
-        </div>
         
         <div id="soundGrid" class="sound-grid">
             <!-- Sound items will be generated here -->
@@ -666,8 +645,8 @@
                 <div class="sound-name">${name}</div>
                 <div class="controls">
                     <div class="control-row">
-                        <button onclick="playSound('${name}'); event.stopPropagation()">▶️ Play</button>
-                        <button class="stop" onclick="stopSound('${name}'); event.stopPropagation()">⏹️ Stop</button>
+                        <button onclick="playSound('${name}'); event.stopPropagation()" title="Play"><img src="res/play.svg" alt="Play" style="width: 20px; height: 20px;"></button>
+                        <button class="stop" onclick="stopSound('${name}'); event.stopPropagation()" title="Stop"><img src="res/stop.svg" alt="Stop" style="width: 20px; height: 20px;"></button>
                     </div>
                     <div class="control-row">
                         <label class="custom-checkbox">
@@ -675,6 +654,8 @@
                             <span class="checkbox-visual"></span>
                             <span class="checkbox-label">🔄 Loop</span>
                         </label>
+                    </div>
+                    <div class="control-row">
                         <label class="custom-checkbox">
                             <input type="checkbox" id="eq_${name}" onchange="handleEQCheckbox('${name}'); event.stopPropagation()">
                             <span class="checkbox-visual"></span>
@@ -693,20 +674,22 @@
                         </div>
                     </div>
                     <div class="volume-section">
-                        <label class="volume-label">Individual Volume:</label>
+                        <label class="volume-label">Volume:</label>
                         <div class="volume-control">
                             <input type="range" id="volume_${name}" min="0" max="1" step="0.01" value="1" oninput="setSoundVolume('${name}', this.value); event.stopPropagation()">
-                             <span id="volumeDisplay_${name}" class="volume-display">100%</span>
+                            <span id="volumeDisplay_${name}" class="volume-display">100%</span>
                         </div>
                     </div>
                      <div class="pan-section">
-                        <label class="pan-label">Pan (L/R):</label>
+                        <label class="pan-label">Pan:</label>
                         <div class="pan-control">
                             <input type="range" id="pan_${name}" min="-10" max="10" step="1" value="0" oninput="setPan('${name}', this.value); event.stopPropagation()">
                              <span id="panDisplay_${name}" class="pan-display">Center</span>
                         </div>
                     </div>
-                    <button class="fade-button" onclick="fadeOut('${name}'); event.stopPropagation()">🎭 Fade Out</button>
+                    <div class="control-row">
+                        <button class="fade-button" onclick="fadeOut('${name}'); event.stopPropagation()" title="Fade Out"><img src="res/fadeout.svg" alt="Fade Out" style="width: 20px; height: 20px;"></button>
+                    </div>
                 </div>
             `;
         }
