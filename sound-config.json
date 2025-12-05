@@ -63,14 +63,14 @@
     {
       "name": "SFX_JANGKRIK",
       "url": "sound/SFX_JANGKRIK.mp3",
-      "volume": 30,
+      "volume": 20,
       "pan": 0,
       "loop": false
     },
     {
       "name": "BGM_AWARD_OPENING",
       "url": "sound/BGM_AWARD_OPENING.mp3",
-      "volume": 90,
+      "volume": 60,
       "pan": 0,
       "loop": false
     },
@@ -98,6 +98,13 @@
     {
       "name": "BGM_AWARD_CLOSING",
       "url": "sound/BGM_AWARD_CLOSING.mp3",
+      "volume": 60,
+      "pan": 0,
+      "loop": false
+    },
+    {
+      "name": "BGM_GEPPETO_SEDIH.mp3",
+      "url": "sound/BGM_GEPPETO_SEDIH.mp3.mp3",
       "volume": 90,
       "pan": 0,
       "loop": false
