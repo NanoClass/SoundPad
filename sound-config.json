@@ -63,7 +63,7 @@
     {
       "name": "SFX_JANGKRIK",
       "url": "sound/SFX_JANGKRIK.mp3",
-      "volume": 20,
+      "volume": 6,
       "pan": 0,
       "loop": false
     },
@@ -103,8 +103,8 @@
       "loop": false
     },
     {
-      "name": "BGM_GEPPETO_SEDIH.mp3",
-      "url": "sound/BGM_GEPPETO_SEDIH.mp3.mp3",
+      "name": "BGM_GEPPETO_SEDIH",
+      "url": "sound/BGM_GEPPETO_SEDIH.mp3",
       "volume": 90,
       "pan": 0,
       "loop": false

@@ -49,6 +49,31 @@
             font-size: 28px;
         }
         
+        .search-section {
+            margin-bottom: 25px;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: linear-gradient(145deg, #333, #2a2a2a);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        #searchInput:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        #searchInput::placeholder {
+            color: #aaa;
+        }
+        
         .master-volume-section {
             background: linear-gradient(145deg, #2a2a2a, #333);
             padding: 15px 20px;
@@ -152,9 +177,6 @@
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .playing-item:hover {
@@ -170,11 +192,21 @@
             background: rgba(33, 150, 243, 0.2);
         }
         
+        .playing-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
         .playing-name {
             flex: 1;
             font-weight: 500;
             color: #fff;
             font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .playing-status {
@@ -194,8 +226,8 @@
         
         .playing-controls {
             display: flex;
-            gap: 5px;
-            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
         }
         
         .mini-stop-btn {
@@ -232,6 +264,7 @@
             cursor: pointer;
             position: relative;
             text-align: left;
+            transition: all 0.3s ease;
         }
         
         .sound-item:hover {
@@ -243,7 +276,11 @@
         }
         
         .sound-item.playing {
-            border-color: #4CAF50;
+            border-left: 10px solid #4CAF50;
+            border-top: 1px solid #555;
+            border-right: 1px solid #555;
+            border-bottom: 1px solid #555;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
         }
         
         .sound-item.looping {
@@ -339,30 +376,26 @@
             text-align: center;
         }
         
-        .seek-container {
-            position: relative;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .seek-control {
-            position: relative;
-            width: 100%;
-            height: 25px;
-            display: flex;
-            align-items: center;
-        }
-        
         .seek-bar-wrapper {
-            flex: 1;
             position: relative;
-            height: 6px;
+            height: 8px;
             background: #444;
-            border-radius: 3px;
+            border-radius: 4px;
             margin: 0 6px;
             cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .seek-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #2196F3, #64B5F6);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+            pointer-events: none;
         }
         
         .seek-slider {
@@ -377,36 +410,47 @@
             appearance: none;
             background: transparent;
             margin: 0;
+            transition: opacity 0.2s ease;
         }
         
         .seek-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background: #2196F3;
             cursor: pointer;
             z-index: 3;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            border: 2px solid #fff;
         }
         
         .seek-slider::-webkit-slider-thumb:hover {
             background: #0b7dda;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        
+        .seek-slider:active::-webkit-slider-thumb {
+            transform: scale(1.15);
+            background: #0966c3;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.6);
         }
         
         .time-display {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
+            font-size: 18px;
             color: #fff;
             font-family: monospace;
             background: rgba(0,0,0,0.7);
-            padding: 2px 4px;
-            border-radius: 3px;
+            padding: 4px 8px;
+            border-radius: 4px;
             white-space: nowrap;
             pointer-events: none;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
         }
         
         .volume-section, .pan-section {
@@ -568,6 +612,47 @@
             grid-column: 1 / -1;
         }
         
+        .volume-meter-section {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .volume-meter-label {
+            font-size: 12px;
+            color: #bbb;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .volume-meter-container {
+            height: 20px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #444;
+        }
+        
+        .volume-meter-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #FFEB3B 75%, #FF9800 90%, #F44336 100%);
+            transition: width 0.1s ease-out;
+            border-radius: 10px;
+        }
+        
+        .volume-meter-peak {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            transition: right 0.3s ease-out;
+        }
+        
         audio {
             display: none;
         }
@@ -591,6 +676,18 @@
     </style>
 </head>
 <body>
+    <!-- Chrome Autoplay Overlay -->
+    <div id="autoplay-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <div style="text-align: center; color: white; max-width: 500px; padding: 30px;">
+            <h2 style="margin-bottom: 20px; font-size: 28px;">🔊 Click to Enable Sound</h2>
+            <p style="font-size: 18px; margin-bottom: 15px;">Chrome requires user interaction before playing audio.</p>
+            <p style="font-size: 16px; opacity: 0.8;">Click anywhere on this screen to unlock audio playback and use the SoundPad.</p>
+            <div style="margin-top: 30px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                <p style="font-size: 14px; margin: 0;">This overlay will disappear after clicking</p>
+            </div>
+        </div>
+    </div>
+    
     <div class="sidebar">
         <h2 class="currently-playing-title">🎵 Currently Playing</h2>
         <div id="currentlyPlayingContainer" class="currently-playing-section">
@@ -600,10 +697,14 @@
             </div>
             <div class="no-sounds">No sounds playing</div>
         </div>
-    </div>
-    
-    <div class="main-content">
-        <h1>SoundPad</h1>
+        
+        <div class="volume-meter-section">
+            <div class="volume-meter-label">🔊 Output Level</div>
+            <div class="volume-meter-container">
+                <div class="volume-meter-bar" id="volumeMeterBar"></div>
+                <div class="volume-meter-peak" id="volumeMeterPeak"></div>
+            </div>
+        </div>
         
         <div class="master-volume-section">
             <label class="master-volume-label">🎚️ Master Volume</label>
@@ -612,7 +713,14 @@
                 <span id="masterVolumeDisplay" class="volume-display">100%</span>
             </div>
         </div>
+    </div>
+    
+    <div class="main-content">
+        <h1>SoundPad</h1>
         
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="🔍 Search sounds..." oninput="filterSounds()">
+        </div>
         
         <div id="soundGrid" class="sound-grid">
             <!-- Sound items will be generated here -->
@@ -630,6 +738,9 @@
         let audioContext; // Single AudioContext
         let macros = {}; // For storing on_play/on_stop actions
         let isExecutingMacro = false; // Prevents macro infinite loops
+        let volumeMeterAnalyser; // Analyser node for volume meter
+        let volumeMeterDataArray; // Array to hold volume meter data
+        let volumeMeterAnimationId; // Animation frame ID for volume meter
 
         // --- Core Audio & UI Functions ---
 
@@ -664,13 +775,10 @@
                     </div>
                     <div class="seek-section">
                         <label class="seek-label">Progress:</label>
-                        <div class="seek-container">
-                            <div class="seek-control">
-                                <div class="seek-bar-wrapper">
-                                    <input type="range" class="seek-slider" id="seek_${name}" min="0" max="100" value="0" step="1" oninput="seekSound('${name}', this.value)">
-                                    <span class="time-display" id="timeDisplay_${name}">0:00 / ${durationText}</span>
-                                </div>
-                            </div>
+                        <div class="time-display" id="timeDisplay_${name}">0:00 / ${durationText}</div>
+                        <div class="seek-bar-wrapper">
+                            <div class="seek-progress" id="seekProgress_${name}"></div>
+                            <input type="range" class="seek-slider" id="seek_${name}" min="0" max="100" value="0" step="1" oninput="seekSound('${name}', this.value)">
                         </div>
                     </div>
                     <div class="volume-section">
@@ -867,6 +975,9 @@
         function playSound(name) {
             const audio = audioElements[name];
             if (audio) {
+                // Initialize AudioContext if needed (for Chrome autoplay policy)
+                initAudioContext();
+                
                 if (macros[name] && macros[name].on_play) {
                     // Defer the execution of the next macro to allow the current one to finish and release its lock.
                     setTimeout(() => executeMacros(macros[name].on_play), 10);
@@ -874,8 +985,57 @@
                 if (audio.currentTime >= audio.duration - 0.1) {
                     audio.currentTime = 0;
                 }
-                audio.play().catch(e => console.error(`Play error for ${name}:`, e));
+                
+                // Handle Chrome's autoplay policy
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Playback started successfully
+                    }).catch(error => {
+                        console.error(`Play error for ${name}:`, error);
+                        // Show user message if autoplay is blocked
+                        if (error.name === "NotAllowedError") {
+                            showAutoplayMessage();
+                        }
+                    });
+                }
             }
+        }
+        
+        function showAutoplayMessage() {
+            // Create or update a message about autoplay policy
+            let messageDiv = document.getElementById('autoplay-message');
+            if (!messageDiv) {
+                messageDiv = document.createElement('div');
+                messageDiv.id = 'autoplay-message';
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(244, 67, 54, 0.9);
+                    color: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 14px;
+                `;
+                document.body.appendChild(messageDiv);
+            }
+            
+            messageDiv.innerHTML = `
+                <strong>Autoplay Blocked</strong><br>
+                Chrome requires user interaction before playing audio. Please click anywhere on the page and try again.
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; color: white; cursor: pointer;">×</button>
+            `;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.remove();
+                }
+            }, 5000);
         }
 
         function stopSound(name) {
@@ -941,8 +1101,14 @@
 
         function seekSound(name, progress) {
             const audio = audioElements[name];
+            const progressBar = document.getElementById(`seekProgress_${name}`);
             if (audio && isFinite(audio.duration)) {
                 audio.currentTime = (parseFloat(progress) / 100) * audio.duration;
+                
+                // Update the visual progress bar immediately for smoother feedback
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
             }
         }
         
@@ -976,15 +1142,30 @@
         
         // --- Web Audio API Setup ---
 
-        function setupAudioGraph(name) {
+        function initAudioContext() {
             if (!audioContext) {
                 try {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Resume the audio context if it's suspended (Chrome autoplay policy)
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(() => {
+                            console.log('AudioContext resumed successfully');
+                        }).catch(err => {
+                            console.error('Error resuming AudioContext:', err);
+                        });
+                    }
                 } catch (e) {
                     console.error("Web Audio API is not supported in this browser");
-                    return;
+                    return false;
                 }
             }
+            return true;
+        }
+
+        function setupAudioGraph(name) {
+            if (!initAudioContext()) return;
+            
             const audio = audioElements[name];
             if (audioNodes[name] || !audio) return;
 
@@ -1003,6 +1184,21 @@
             
             lowshelf.connect(highshelf);
 
+            // Create volume meter analyser if it doesn't exist
+            if (!volumeMeterAnalyser) {
+                volumeMeterAnalyser = audioContext.createAnalyser();
+                volumeMeterAnalyser.fftSize = 256;
+                volumeMeterAnalyser.smoothingTimeConstant = 0.8;
+                const bufferLength = volumeMeterAnalyser.frequencyBinCount;
+                volumeMeterDataArray = new Uint8Array(bufferLength);
+                
+                // Connect the analyser to the destination for volume metering
+                volumeMeterAnalyser.connect(audioContext.destination);
+                
+                // Start the volume meter animation
+                updateVolumeMeter();
+            }
+
             audioNodes[name] = {
                 source,
                 panner,
@@ -1011,7 +1207,9 @@
             };
 
             source.connect(panner);
-            panner.connect(audioContext.destination);
+            
+            // Connect to the volume meter analyser
+            panner.connect(volumeMeterAnalyser);
 
             audioNodes[name].lastFilter.connect(audioContext.destination);
         }
@@ -1039,10 +1237,72 @@
             if (newState) {
                 nodes.panner.disconnect();
                 nodes.panner.connect(nodes.firstFilter);
+                nodes.lastFilter.connect(volumeMeterAnalyser);
             } else {
                 nodes.panner.disconnect();
                 nodes.panner.connect(audioContext.destination);
             }
+        }
+        
+        function updateVolumeMeter() {
+            if (!volumeMeterAnalyser || !volumeMeterDataArray) return;
+            
+            volumeMeterAnalyser.getByteFrequencyData(volumeMeterDataArray);
+            
+            // Calculate average volume across all frequency bins
+            let sum = 0;
+            for (let i = 0; i < volumeMeterDataArray.length; i++) {
+                sum += volumeMeterDataArray[i];
+            }
+            const average = sum / volumeMeterDataArray.length;
+            
+            // Convert to percentage (0-100)
+            const volumePercent = Math.min(100, Math.max(0, (average / 255) * 100 * 1.5)); // Scale up for better visibility
+            
+            // Update the volume meter bar
+            const volumeMeterBar = document.getElementById('volumeMeterBar');
+            if (volumeMeterBar) {
+                volumeMeterBar.style.width = volumePercent + '%';
+            }
+            
+            // Update the peak indicator
+            const volumeMeterPeak = document.getElementById('volumeMeterPeak');
+            if (volumeMeterPeak) {
+                // Only update peak if the current volume is higher than the current peak position
+                const currentPeakPosition = parseFloat(volumeMeterPeak.style.right) || 100;
+                const newPeakPosition = 100 - volumePercent;
+                if (newPeakPosition < currentPeakPosition) {
+                    volumeMeterPeak.style.right = newPeakPosition + '%';
+                }
+                
+                // Slowly reset the peak position
+                setTimeout(() => {
+                    if (volumeMeterPeak) {
+                        volumeMeterPeak.style.right = '100%';
+                    }
+                }, 1000);
+            }
+            
+            // Continue the animation
+            volumeMeterAnimationId = requestAnimationFrame(updateVolumeMeter);
+        }
+        
+        function filterSounds() {
+            const searchInput = document.getElementById('searchInput');
+            const filterText = searchInput.value.toLowerCase();
+            const soundItems = document.querySelectorAll('.sound-item');
+            
+            soundItems.forEach(item => {
+                const soundName = item.getAttribute('data-sound');
+                if (soundName) {
+                    const nameLower = soundName.toLowerCase();
+                    if (nameLower.includes(filterText)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+            });
         }
 
         // --- UI Updates ---
@@ -1085,9 +1345,16 @@
         function updateSeekDisplay(name, audio) {
             const slider = document.getElementById(`seek_${name}`);
             const timeDisplay = document.getElementById(`timeDisplay_${name}`);
+            const progressBar = document.getElementById(`seekProgress_${name}`);
             if (slider && timeDisplay && isFinite(audio.duration)) {
                 const progress = (audio.currentTime / audio.duration) * 100;
                 slider.value = progress;
+                
+                // Update the visual progress bar
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+                
                 const remainingTime = audio.duration - audio.currentTime;
                 timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)} (-${formatTime(remainingTime)})`;
             }
@@ -1107,8 +1374,10 @@
                     const statusClass = isLooping ? 'looping' : '';
                     container.insertAdjacentHTML('beforeend', `
                         <div class="playing-item ${statusClass}">
-                            <span class="playing-name">${name}</span>
-                            <span class="playing-status ${statusClass}">${isLooping ? 'LOOP' : 'PLAY'}</span>
+                            <div class="playing-header">
+                                <span class="playing-name" title="${name}">${name}</span>
+                                <span class="playing-status ${statusClass}">${isLooping ? 'LOOP' : 'PLAY'}</span>
+                            </div>
                             <div class="playing-controls">
                                 <button class="mini-stop-btn" onclick="stopSound('${name}')" title="Stop">⏹</button>
                             </div>
@@ -1134,7 +1403,7 @@
                         audio.currentTime = 0;
                     }
                     updateSeekDisplay(name, audio);
-                }, 50);
+                }, 100); // Increased interval for smoother updates
             });
 
             audio.addEventListener('pause', () => {
@@ -1161,6 +1430,29 @@
         window.onload = function() {
             updateMasterVolumeDisplay('1');
             loadSoundsFromConfig('sound-config.json');
+            
+            // Handle overlay click to initialize AudioContext
+            const overlay = document.getElementById('autoplay-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    // Initialize AudioContext if needed
+                    if (!audioContext) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    
+                    // Resume the audio context if it's suspended
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume().then(() => {
+                            console.log('AudioContext resumed successfully');
+                        }).catch(err => {
+                            console.error('Error resuming AudioContext:', err);
+                        });
+                    }
+                    
+                    // Remove the overlay
+                    overlay.style.display = 'none';
+                });
+            }
         };
     </script>
 </body>
