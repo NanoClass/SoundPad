@@ -1,6 +1,13 @@
 {
   "sounds": [
     {
+      "name": "BGM_OPENING_EVENT",
+      "url": "sound/BGM_OPENING_EVENT.mp3",
+      "volume": 30,
+      "pan": 0,
+      "loop": false
+    },
+    {
       "name": "BGM_OPENING",
       "url": "sound/BGM_OPENING.mp3",
       "volume": 90,
