@@ -2,7 +2,7 @@
   "sounds": [
     {
       "name": "BGM_OPENING_EVENT",
-      "url": "sound/BGM_OPENING_EVENT.mp3",
+      "url": "sound/BGM_INTERVIEW.mp3",
       "volume": 30,
       "pan": 0,
       "loop": false
@@ -76,7 +76,7 @@
     },
         {
       "name": "BGM_INTERVIEW",
-      "url": "sound/BGM_INTERVIEW.mp3",
+      "url": "sound/BGM_OPENING_EVENT.mp3",
       "volume": 30,
       "pan": 0,
       "loop": true
