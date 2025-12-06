@@ -74,6 +74,13 @@
       "pan": 0,
       "loop": false
     },
+        {
+      "name": "BGM_INTERVIEW",
+      "url": "sound/BGM_INTERVIEW.mp3",
+      "volume": 30,
+      "pan": 0,
+      "loop": true
+    },
     {
       "name": "PERF_ONE_VIBE",
       "url": "sound/PERF_ONE_VIBE.mp3",
